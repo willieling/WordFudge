@@ -1,10 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace WordFudge
+namespace WordFudge.Boards
 {
-    //make this a non-mono behaviour?
-    public class TileHandGenerator : MonoBehaviour
+    /// <summary>
+    /// This class represents the bag of tiles.
+    /// Most functions for this class can thought of as removing tiles from the bag.
+    /// </summary>
+    public class TileBag
     {
         private readonly Dictionary<char, uint> letterCounts = new Dictionary<char, uint>()
         {
@@ -38,14 +41,14 @@ namespace WordFudge
         };
 
         private Dictionary<char, uint> remainingLetters;
+        private uint startingLettersCount;
+        private uint refillLettersCount;
 
-        [SerializeField]
-        private uint startingLettersCount = 20;
-        [SerializeField]
-        private uint refillLettersCount = 5;
-
-        public void Initialize()
+        public void Initialize(uint startingLettersCount, uint refillLettersCount)
         {
+            this.startingLettersCount = startingLettersCount;
+            this.refillLettersCount = refillLettersCount;
+
             remainingLetters = new Dictionary<char, uint>(letterCounts);
         }
 
