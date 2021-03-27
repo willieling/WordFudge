@@ -8,7 +8,7 @@ namespace WordFudge
         [SerializeField]
         private Text Text;
         [SerializeField]
-        private BoxCollider Collider;
+        private BoxCollider2D Collider;
 
         private RectTransform rectTransform;
 
@@ -16,10 +16,8 @@ namespace WordFudge
 
         private void Awake()
         {
-            const int DEPTH = 1;
-
             rectTransform = GetComponent<RectTransform>();
-            //Collider.size = new Vector3(rectTransform.sizeDelta.x, rectTransform.sizeDelta.y, DEPTH);
+            Collider.size = rectTransform.sizeDelta;
         }
 
         public void Initialize(char character)
