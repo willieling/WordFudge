@@ -1,4 +1,5 @@
 using UnityEngine;
+using WordFudge.Boards;
 using WordFudge.InputSystem;
 
 namespace WordFudge
@@ -6,22 +7,21 @@ namespace WordFudge
     public class GameBootstrap : MonoBehaviour
     {
         [SerializeField]
-        private Transform letterTray;
+        private TileTray letterTray;
         [SerializeField]
-        private Transform gameBoard;
+        private GameBoard gameBoard;
         [SerializeField]
-        private TileHandGenerator handGenerator;
-        [SerializeField]
-        private WorldTileGenerator tileGenerator;
+        private WorldTile tilePrefab;
         [SerializeField]
         private WordFudgeGameplay gameplay;
 
-        public BaseInputDetector InputDetector { get; private set; }
+        private BaseInputDetector inputDetector;
+        private InputHandler inputHandler;
 
         private void Start()
         {
 #if UNITY_EDITOR
-            InputDetector = gameObject.AddComponent<MouseInputDetector>();
+            inputDetector = gameObject.AddComponent<MouseInputDetector>();
 #else
             InputDetector = gameObject.AddComponent<TouchInputDetector>();
 #endif //UNITY_EDITOR
@@ -31,10 +31,14 @@ namespace WordFudge
 
         private void StartGame()
         {
-            handGenerator.Initialize();
-            tileGenerator.Initialize(letterTray);
-            gameplay.Initialize(handGenerator, tileGenerator);
+            gameplay.Initialize(letterTray);
 
+            inputHandler = new InputHandler(inputDetector, gameplay);
+        }
+
+        private void Update()
+        {
+            inputHandler.Update();
         }
     }
 }

@@ -60,5 +60,25 @@ namespace WordFudge.InputSystem
         protected abstract Vector2 GetTouchPosition();
         //inline?
         protected abstract Vector2 UpdateMoveDelta(Vector2 currentPosition);
+
+#if UNITY_EDITOR
+        [SerializeField]
+        bool showDebug = false;
+
+        Rect debugRect = new Rect(Vector2.zero, new Vector2(100, 800));
+
+        void OnGUI()
+        {
+            if (showDebug)  // or check the app debug flag
+            {
+                GUI.Label(debugRect,
+                    $"InputData\n" +
+                    $"Count: {currentInputData.count}\n" +
+                    $"Phase: {currentInputData.phase}\n" +
+                    $"Position: {currentInputData.position}\n" +
+                    $"MoveDelta: {currentInputData.moveDelta}\n");
+            }
+        }
+#endif //UNITY_EDITOR
     }
 }
