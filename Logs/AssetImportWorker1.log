@@ -1,0 +1,129 @@
+Using pre-set license
+Built from '2020.3/release' branch; Version is '2020.3.1f1 (77a89f25062f) revision 7841951'; Using compiler version '192528614'; Build Type 'Release'
+OS: 'Windows 10 Pro; OS build 19042.870; Version 2009; 64bit' Language: 'en' Physical Memory: 32678 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1, IsPro: 0
+
+ COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\2020.3.1f1\Editor\Unity.exe
+-adb2
+-batchMode
+-noUpm
+-name
+AssetImportWorker1
+-projectPath
+C:/Users/willi/source/WordFudge
+-logFile
+Logs/AssetImportWorker1.log
+-srvPort
+54660
+Successfully changed project path to: C:/Users/willi/source/WordFudge
+C:/Users/willi/source/WordFudge
+Using Asset Import Pipeline V2.
+Refreshing native plugins compatible for Editor in 44.50 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Initialize engine version: 2020.3.1f1 (77a89f25062f)
+[Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path C:/Users/willi/source/WordFudge/Assets
+GfxDevice: creating device client; threaded=0
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: AMD Radeon RX 5700 XT (ID=0x731f)
+    Vendor:   
+    VRAM:     8152 MB
+    Driver:   27.20.14533.1000
+Initialize mono
+Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit'
+Mono config path = 'C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56708
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.005054 seconds.
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 46.38 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+Mono: successfully reloaded assembly
+- Completed reload, in  2.675 seconds
+Platform modules already initialized, skipping
+Registering precompiled user dll's ...
+Registered in 0.001067 seconds.
+Begin MonoManager ReloadAssembly
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.33 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+Mono: successfully reloaded assembly
+- Completed reload, in  1.821 seconds
+Platform modules already initialized, skipping
+========================================================================
+Worker process is ready to serve import requests
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.15 seconds
+Refreshing native plugins compatible for Editor in 0.31 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1127 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 57.3 MB.
+System memory in use after: 57.3 MB.
+
+Unloading 10 unused Assets to reduce memory usage. Loaded Objects now: 1570.
+Total: 3.644946 ms (FindLiveObjects: 0.182146 ms CreateObjectMapping: 0.063416 ms MarkObjects: 3.263054 ms  DeleteObjects: 0.129137 ms)
+
+========================================================================
+Received Import Request.
+  path: Assets/WorldTile/WorldTile.prefab
+  artifactKey: Guid(3a5b18ae7feeb93489998128fca893fb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/WorldTile/WorldTile.prefab using Guid(3a5b18ae7feeb93489998128fca893fb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c0a16de180d60179299eaa3da65174f3') in 0.109401 seconds
+  Import took 0.112478 seconds .
+
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.001423 seconds.
+Begin MonoManager ReloadAssembly
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.32 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+Mono: successfully reloaded assembly
+- Completed reload, in  1.747 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.29 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1122 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 57.3 MB.
+System memory in use after: 57.4 MB.
+
+Unloading 5 unused Assets to reduce memory usage. Loaded Objects now: 1575.
+Total: 2.582730 ms (FindLiveObjects: 0.203448 ms CreateObjectMapping: 0.055384 ms MarkObjects: 2.248749 ms  DeleteObjects: 0.066698 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 46.865294 seconds.
+  path: Assets/WorldTile/WorldTile.prefab
+  artifactKey: Guid(3a5b18ae7feeb93489998128fca893fb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/WorldTile/WorldTile.prefab using Guid(3a5b18ae7feeb93489998128fca893fb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd9b42d400c22a22658be23386ccd7cd3') in 0.073578 seconds
+  Import took 0.076634 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 3.341807 seconds.
+  path: Assets/WorldTile/WorldTile.prefab
+  artifactKey: Guid(3a5b18ae7feeb93489998128fca893fb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/WorldTile/WorldTile.prefab using Guid(3a5b18ae7feeb93489998128fca893fb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1eca088cf885c616b0cf0ebacdb78031') in 0.008219 seconds
+  Import took 0.011205 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.027786 seconds.
+  path: Assets/WorldTile/WorldTile.prefab
+  artifactKey: Guid(3a5b18ae7feeb93489998128fca893fb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/WorldTile/WorldTile.prefab using Guid(3a5b18ae7feeb93489998128fca893fb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1eca088cf885c616b0cf0ebacdb78031') in 0.008285 seconds
+  Import took 0.011349 seconds .
+

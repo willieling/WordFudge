@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2406693250638398867}
   - component: {fileID: 1102578223854219717}
   - component: {fileID: 5727746782642163851}
-  - component: {fileID: 906681140443164877}
+  - component: {fileID: 6619866430560535520}
   m_Layer: 0
   m_Name: WorldTile
   m_TagString: Untagged
@@ -52,7 +52,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Text: {fileID: 1248153477647987074}
-  Collider: {fileID: 0}
+  Collider: {fileID: 6619866430560535520}
 --- !u!222 &5727746782642163851
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -61,7 +61,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1520431182519400133}
   m_CullTransparentMesh: 1
---- !u!61 &906681140443164877
+--- !u!61 &6619866430560535520
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -85,7 +85,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 100, y: 100}
+  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
 --- !u!1 &4258408296566066073
 GameObject:
