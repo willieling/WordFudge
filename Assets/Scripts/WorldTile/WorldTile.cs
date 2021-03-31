@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,6 +25,11 @@ namespace WordFudge
         {
             Character = character;
             Text.text = Character.ToString();
+        }
+
+        internal void PickUp()
+        {
+            throw new NotImplementedException();
         }
     }
 }
