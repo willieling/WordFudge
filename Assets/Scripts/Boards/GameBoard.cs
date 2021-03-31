@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +7,9 @@ namespace WordFudge.Boards
 {
     public class GameBoard : MonoBehaviour
     {
-        // Start is called before the first frame update
+        [SerializeField]
+        private SnapGrid grid;
+
         void Start()
         {
         
@@ -16,6 +19,16 @@ namespace WordFudge.Boards
         void Update()
         {
         
+        }
+
+        internal void PickupTile(WorldTile tile)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void DropTile(WorldTile tile)
+        {
+            throw new NotImplementedException();
         }
     }
 }

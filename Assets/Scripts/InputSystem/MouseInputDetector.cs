@@ -14,16 +14,17 @@ namespace WordFudge.InputSystem
 
         protected override Inputcount GetTouchCount()
         {
-            if (Input.GetMouseButton(RIGHT_MOUSE_BUTTON))
+            Inputcount count = Inputcount.None;
+            if (Input.GetMouseButton(LEFT_MOUSE_BUTTON))
             {
-                return Inputcount.Double;
+                count = Inputcount.Single;
             }
-            else if (Input.GetMouseButton(LEFT_MOUSE_BUTTON))
+            if (count == Inputcount.Single && Input.GetMouseButton(RIGHT_MOUSE_BUTTON))
             {
-                return Inputcount.Single;
+                count = Inputcount.Double;
             }
 
-            return Inputcount.None;
+            return count;
         }
 
         protected override TouchPhase GetTouchPhase()

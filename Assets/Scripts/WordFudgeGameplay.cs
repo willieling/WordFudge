@@ -16,7 +16,7 @@ namespace WordFudge
         {
             this.tileTray = TileTray;
             this.tileTray.Initialize();
-            this.tileTray.ShowStartingHand();
+            this.tileTray.FillTrayWithStartingHand();
         }
     }
 }
