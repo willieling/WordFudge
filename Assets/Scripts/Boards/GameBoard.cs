@@ -1,34 +1,18 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace WordFudge.Boards
 {
-    public class GameBoard : MonoBehaviour
+    [RequireComponent(typeof(BoxCollider2D))]
+    public class GameBoard : BaseBoard
     {
-        [SerializeField]
-        private SnapGrid grid;
-
-        void Start()
+        public void AddTile(WorldTile tile)
         {
-        
+            AddTileToGrid(tile, SnapGrid.CollisionResolution.ClosestFreeCell);
         }
 
-        // Update is called once per frame
-        void Update()
+        public void RemoveTile(WorldTile tile)
         {
-        
-        }
-
-        internal void PickupTile(WorldTile tile)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void DropTile(WorldTile tile)
-        {
-            throw new NotImplementedException();
+            RemoveTileToGrid(tile);
         }
     }
 }

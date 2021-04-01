@@ -51,8 +51,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d60fa7c72358ada4a9f518f61fe7bfcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: {fileID: 1248153477647987074}
-  Collider: {fileID: 6619866430560535520}
+  text: {fileID: 1248153477647987074}
+  background: {fileID: 3827656945614617290}
+  collider: {fileID: 6619866430560535520}
+  placedAndExcluded: {r: 1, g: 1, b: 1, a: 1}
+  placedAndIncluded: {r: 0.2009167, g: 0.38031715, b: 0.990566, a: 1}
+  pickedUp: {r: 0.9607843, g: 0.80784315, b: 0.38431373, a: 1}
 --- !u!222 &5727746782642163851
 CanvasRenderer:
   m_ObjectHideFlags: 0

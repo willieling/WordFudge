@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,9 +6,19 @@ namespace WordFudge
     public class WorldTile : MonoBehaviour
     {
         [SerializeField]
-        private Text Text;
+        private Text text;
         [SerializeField]
-        private BoxCollider2D Collider;
+        private Image background;
+        [SerializeField]
+        private new BoxCollider2D collider;
+
+        [Header("Visuals")]
+        [SerializeField]
+        private Color placedAndExcluded;
+        [SerializeField]
+        private Color placedAndIncluded;
+        [SerializeField]
+        private Color pickedUp;
 
         private RectTransform rectTransform;
 
@@ -18,18 +27,28 @@ namespace WordFudge
         private void Awake()
         {
             rectTransform = GetComponent<RectTransform>();
-            Collider.size = rectTransform.sizeDelta;
+            collider.size = rectTransform.sizeDelta;
+            ShowPutDown();
         }
 
         public void Initialize(char character)
         {
             Character = character;
-            Text.text = Character.ToString();
+            text.text = Character.ToString();
+
+#if UNITY_EDITOR
+            gameObject.name += $" - {character}";
+#endif
         }
 
-        internal void PickUp()
+        public void ShowPickUp()
         {
-            throw new NotImplementedException();
+            background.color = pickedUp;
+        }
+
+        public void ShowPutDown()
+        {
+            background.color = placedAndExcluded;
         }
     }
 }
