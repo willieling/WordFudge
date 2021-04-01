@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace WordFudge.Boards
 {
-    public class TileTray : MonoBehaviour
+    [RequireComponent(typeof(BoxCollider2D))]
+    public class TileTray : BaseBoard
     {
         [SerializeField]
         private WorldTile tilePrefab;
@@ -11,10 +12,8 @@ namespace WordFudge.Boards
         private uint startingLettersCount = 20;
         [SerializeField]
         private uint refillLettersCount = 5;
-        [SerializeField]
-        private SnapGrid grid;
 
-        private TileBag tileBag = new TileBag();
+        private readonly TileBag tileBag = new TileBag();
 
         private readonly HashSet<WorldTile> heldTiles = new HashSet<WorldTile>();
 
@@ -46,25 +45,30 @@ namespace WordFudge.Boards
             }
         }
 
+        public void AddTile(WorldTile tile)
+        {
+            if (!heldTiles.Add(tile))
+            {
+                //todo error
+            }
+
+            AddTileToGrid(tile, SnapGrid.CollisionResolution.ClosestFreeCell);
+        }
+
         public void RemoveTile(WorldTile tile)
         {
             if(!heldTiles.Remove(tile))
             {
                 //todo error
+                return;
             }
 
             if(heldTiles.Count == 0)
             {
                 RefillTray();
             }
-        }
 
-        public void AddTile(WorldTile tile)
-        {
-            if(!heldTiles.Add(tile))
-            {
-                //todo error
-            }
+            RemoveTileToGrid(tile);
         }
 
         private void RefillTray()

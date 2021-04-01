@@ -15,14 +15,11 @@ namespace WordFudge
         }
 
         private BaseInputDetector inputDetector;
-        private WordFudgeGameplay gameplay;
         private WorldTile selectedTile;
 
         public InputHandler(BaseInputDetector inputDetector, WordFudgeGameplay gameplay)
         {
             this.inputDetector = inputDetector;
-            //needed?
-            this.gameplay = gameplay;
         }
 
         public void Update()
@@ -38,6 +35,7 @@ namespace WordFudge
                     HandleDoubleInput(inputData);
                     break;
                 default:
+                    HandleNoInput(inputData);
                     return;
             }
         }
@@ -63,47 +61,30 @@ namespace WordFudge
             }
         }
 
-        private WorldTile TryHitTile(BaseInputDetector.InputData inputData)
-        {
-            WordFudgeHitResults results = DetectHitObjects(inputData);
-            return results.tile;
-
-            //const int MAX_DISTANCE = 1;
-
-            //RaycastHit2D hit = Physics2D.Raycast(inputData.position, Vector2.right, MAX_DISTANCE);
-            //if(hit.collider != null)
-            //{
-            //    return hit.collider.GetComponent<WorldTile>();
-            //}
-
-            //return null;
-
-            //WorldTile hitTile = null;
-            //GameBoard gameBoard = null;
-            //TileTray tileTray = null;
-            //GetObjects(, ref hitTile, ref gameBoard, ref tileTray);
-            //if (hitTile != null)
-            //{
-            //    Debug.Log($"Hit tile: {hitTile.Character}");
-
-            //    selectedTile = hitTile;
-            //    selectedTile.VisuallySelect();
-            //}
-        }
-
         private void PickupTile(BaseInputDetector.InputData inputData)
         {
             WordFudgeHitResults results = DetectHitObjects(inputData);
+            if(results.tile == null)
+            {
+                return;
+            }
+
+            selectedTile = results.tile;
+
             if (results.gameBoard != null)
             {
-                results.gameBoard.PickupTile(results.tile);
+                results.gameBoard.RemoveTile(selectedTile);
+            }
+            else if (results.tileTray != null)
+            {
+                results.tileTray.RemoveTile(selectedTile);
             }
             else
             {
-                results.tileTray.RemoveTile(results.tile);
+                throw new NotImplementedException("Can't drop a tile onto nothing");
             }
 
-            results.tile.PickUp();
+            selectedTile.ShowPickUp();
         }
 
         private void MoveSelectedTile(BaseInputDetector.InputData inputData)
@@ -116,17 +97,34 @@ namespace WordFudge
             WordFudgeHitResults results = DetectHitObjects(inputData);
             if(results.gameBoard != null)
             {
-                results.gameBoard.DropTile(results.tile);
+                results.gameBoard.AddTile(selectedTile);
+            }
+            else if(results.tileTray != null)
+            {
+                results.tileTray.AddTile(selectedTile);
             }
             else
             {
-                results.tileTray.AddTile(results.tile);
+                throw new NotImplementedException("Can't drop a tile onto nothing");
             }
+
+            selectedTile = null;
         }
 
         private void HandleDoubleInput(BaseInputDetector.InputData inputData)
         {
             throw new NotImplementedException();
+        }
+
+
+        private void HandleNoInput(BaseInputDetector.InputData inputData)
+        {
+            switch (inputData.phase)
+            {
+                case TouchPhase.Ended:
+                    DropTile(inputData);
+                    break;
+            }
         }
 
         private WordFudgeHitResults DetectHitObjects(BaseInputDetector.InputData inputData)

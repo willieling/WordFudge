@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 namespace WordFudge.InputSystem
@@ -18,13 +18,22 @@ namespace WordFudge.InputSystem
             public TouchPhase phase;
             public Vector2 moveDelta;
             public Vector2 position;
+
+            public InputData(TouchPhase phase)
+            {
+                count = Inputcount.None;
+                this.phase = phase;
+                moveDelta = Vector2.zero;
+                position = Vector2.zero;
+            }
         }
 
         protected InputData currentInputData;
 
         protected virtual void Start()
         {
-            currentInputData = new InputData();
+            //We interpret TouchPhase.Cancelled to mean no input
+            currentInputData = new InputData(TouchPhase.Canceled);
         }
 
         protected void Update()
@@ -34,19 +43,31 @@ namespace WordFudge.InputSystem
             currentInputData.count = GetTouchCount();
             if (currentInputData.count == Inputcount.None)
             {
-                currentInputData.phase = TouchPhase.Ended;
-
-                currentInputData.position = Vector2.zero;
-                currentInputData.moveDelta = Vector2.zero;
+                switch (currentInputData.phase)
+                {
+                    case TouchPhase.Began:
+                    case TouchPhase.Moved:
+                    case TouchPhase.Stationary:
+                        currentInputData.phase = TouchPhase.Ended;
+                        break;
+                    case TouchPhase.Ended:
+                        currentInputData.phase = TouchPhase.Canceled;
+                        break;
+                    case TouchPhase.Canceled:
+                        //do nothing
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
             }
             else
             {
                 currentInputData.phase = GetTouchPhase();
-
-                Vector2 currentPosition = GetTouchPosition();
-                currentInputData.moveDelta = UpdateMoveDelta(currentPosition);
-                currentInputData.position = currentPosition;
             }
+
+            Vector2 currentFramePosition = GetTouchPosition();
+            currentInputData.moveDelta = UpdateMoveDelta(currentFramePosition);
+            currentInputData.position = currentFramePosition;
         }
 
         public InputData GetCurrentInputData()
