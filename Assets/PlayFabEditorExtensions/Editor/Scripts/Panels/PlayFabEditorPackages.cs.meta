@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Assets/PlayFabEditorExtensions/Editor/Scripts/Panels/PlayFabEditorPackages.cs.meta
 guid: d82ae6e4704d39945b28d49f4f084d9d
+=======
+guid: 30df247c08f96d843b87053d2cee9d80
+>>>>>>> 6ac00e8b1ac66039a93b6917e35d3b32ff09cc8b:Assets/Scripts/Boards/BaseBoard.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
