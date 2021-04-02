@@ -132,9 +132,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 136825193}
-  - component: {fileID: 136825196}
-  - component: {fileID: 136825194}
-  - component: {fileID: 136825195}
   m_Layer: 5
   m_Name: DragBoard
   m_TagString: Untagged
@@ -161,56 +158,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!61 &136825194
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 136825192}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 500, y: 500}
-  m_EdgeRadius: 0
---- !u!114 &136825195
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 136825192}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99f23b64a0e32dd4d952875dcd846f5b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &136825196
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 136825192}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0a583e565e5619418674b83d0166682, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &377720236
 GameObject:
   m_ObjectHideFlags: 0
@@ -303,7 +250,6 @@ GameObject:
   - component: {fileID: 563037651}
   - component: {fileID: 563037650}
   - component: {fileID: 563037649}
-  - component: {fileID: 563037654}
   m_Layer: 5
   m_Name: LetterTray
   m_TagString: Untagged
@@ -426,18 +372,6 @@ MonoBehaviour:
   tilePrefab: {fileID: 1102578223854219717, guid: 3a5b18ae7feeb93489998128fca893fb, type: 3}
   startingLettersCount: 20
   refillLettersCount: 5
---- !u!114 &563037654
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 563037647}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99f23b64a0e32dd4d952875dcd846f5b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -726,7 +660,6 @@ GameObject:
   - component: {fileID: 1615173942}
   - component: {fileID: 1615173941}
   - component: {fileID: 1615173940}
-  - component: {fileID: 1615173943}
   m_Layer: 5
   m_Name: GameBoard
   m_TagString: Untagged
@@ -808,18 +741,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dragSpace: {fileID: 136825193}
---- !u!114 &1615173943
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1615173938}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99f23b64a0e32dd4d952875dcd846f5b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1996943757
 GameObject:
   m_ObjectHideFlags: 0

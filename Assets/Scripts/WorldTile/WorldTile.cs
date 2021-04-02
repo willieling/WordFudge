@@ -28,7 +28,7 @@ namespace WordFudge
         {
             rectTransform = GetComponent<RectTransform>();
             collider.size = rectTransform.sizeDelta;
-            ShowPutDown();
+            ShowPutDownAndExcluded();
         }
 
         public void Initialize(char character)
@@ -46,9 +46,14 @@ namespace WordFudge
             background.color = pickedUp;
         }
 
-        public void ShowPutDown()
+        public void ShowPutDownAndExcluded()
         {
             background.color = placedAndExcluded;
+        }
+
+        public void ShowAsIncluded()
+        {
+            background.color = placedAndIncluded;
         }
     }
 }

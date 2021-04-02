@@ -108,6 +108,7 @@ namespace WordFudge
                 throw new NotImplementedException("Can't drop a tile onto nothing");
             }
 
+            selectedTile.ShowPutDownAndExcluded();
             selectedTile = null;
         }
 
