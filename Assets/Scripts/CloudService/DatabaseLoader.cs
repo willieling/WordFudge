@@ -17,22 +17,40 @@ namespace WordFudge.CloudService
     public class DatabaseLoader
     {
         public event Action<bool> FinishedLoadingDatabase;
+        public event Action<float> ProgressUpdate;
 
         private const string DATABASE_PATH_PREFIX = "Database";
         private const string DB_VERSION_KEY = "DatabaseVersion";
         private const string WORDS_KEY = "Words";
 
-        //private DatabaseVersions localVersion;
+        private float progress;
 
         public void LoadDatabase()
         {
             Debug.Log("Checking PlayFab for versioning.");
             PlayFabRequests.GetTitleData(new List<string>() { DB_VERSION_KEY, "asf" }, OnGetTitleDataVersionSuccess, OnGetTitleDataVersionFailure);
+
+            UpdateProgress(0, 0);
+        }
+
+        /// <summary>
+        /// Update the progress value
+        /// </summary>
+        /// <param name="minValue">The minimum value the progress value can be.</param>
+        /// <param name="additiveValue">Amount to add to the current progress value.</param>
+        private void UpdateProgress(float minValue, float additiveValue)
+        {
+            progress = Mathf.Max(progress, minValue);
+            progress += additiveValue;
+
+            ProgressUpdate(progress);
         }
 
         private void OnGetTitleDataVersionSuccess(GetTitleDataResult result)
         {
             Debug.Log("Version data fetched.");
+
+            UpdateProgress(0, 0.1f);
 
             string versionPath = GetDatabaseFilePath(DB_VERSION_KEY);
             string savedVersionsJson = SaveSystem.Load(versionPath);
@@ -64,6 +82,7 @@ namespace WordFudge.CloudService
             if (staleData.Count > 0)
             {
                 Debug.Log("Data is stale.  Fetching updated data from PlayFab.");
+                UpdateProgress(0.5f, 0);
 
                 PlayFabRequests.GetTitleData(null, OnGetWordsSuccess, OnGetWordsFailure);
             }
@@ -81,6 +100,8 @@ namespace WordFudge.CloudService
 
         private void OnGetWordsSuccess(GetTitleDataResult result)
         {
+            UpdateProgress(0.6f, 0);
+
             SaveSystem.Save(GetDatabaseFilePath(DB_VERSION_KEY), result.Data[DB_VERSION_KEY]);
 
             List<string> wordListJsons = new List<string>(result.Data.Count);
@@ -142,6 +163,8 @@ namespace WordFudge.CloudService
 
             Database.InitializeWordList(wordList);
             Debug.Log("Word list initialized!");
+
+            UpdateProgress(1, 0);
 
             FinishedLoadingDatabase.Invoke(true);
         }
