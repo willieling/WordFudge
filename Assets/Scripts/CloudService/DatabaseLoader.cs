@@ -26,15 +26,20 @@ namespace WordFudge.CloudService
 
         public void LoadDatabase()
         {
+            Debug.Log("Checking PlayFab for versioning.");
             PlayFabRequests.GetTitleData(new List<string>() { DB_VERSION_KEY, "asf" }, OnGetTitleDataVersionSuccess, OnGetTitleDataVersionFailure);
         }
 
         private void OnGetTitleDataVersionSuccess(GetTitleDataResult result)
         {
+            Debug.Log("Version data fetched.");
+
             string versionPath = GetDatabaseFilePath(DB_VERSION_KEY);
             string savedVersionsJson = SaveSystem.Load(versionPath);
             if (string.IsNullOrEmpty(savedVersionsJson))
             {
+                Debug.Log("No local version data found.  Copying packaged version data to save folder.");
+
                 TextAsset wordAsset = Resources.Load<TextAsset>(versionPath);
                 Assert.IsNotNull(wordAsset);
                 savedVersionsJson = wordAsset.text;
@@ -58,7 +63,8 @@ namespace WordFudge.CloudService
             // so just pass in null to get all title data
             if (staleData.Count > 0)
             {
-                SaveSystem.Save(GetDatabaseFilePath(DB_VERSION_KEY), result.Data[DB_VERSION_KEY]);
+                Debug.Log("Data is stale.  Fetching updated data from PlayFab.");
+
                 PlayFabRequests.GetTitleData(null, OnGetWordsSuccess, OnGetWordsFailure);
             }
             else
@@ -70,10 +76,13 @@ namespace WordFudge.CloudService
         private void OnGetTitleDataVersionFailure(PlayFabError error)
         {
             Debug.LogError($"Could not get versioning data.\n{error.GenerateErrorReport()}");
+            FinishedLoadingDatabase.Invoke(false);
         }
 
         private void OnGetWordsSuccess(GetTitleDataResult result)
         {
+            SaveSystem.Save(GetDatabaseFilePath(DB_VERSION_KEY), result.Data[DB_VERSION_KEY]);
+
             List<string> wordListJsons = new List<string>(result.Data.Count);
             foreach(KeyValuePair<string, string> kvp in result.Data)
             {
@@ -84,6 +93,7 @@ namespace WordFudge.CloudService
             }
 
             Assert.IsTrue(wordListJsons.Count > 0, "Tried to update words lists but didn't get anything back.");
+            Debug.Log($"Got an update for the word list.  It's split into {wordListJsons.Count} parts.");
 
             HashSet<string> uniqueWords = new HashSet<string>();
             foreach(string json in wordListJsons)
@@ -109,6 +119,7 @@ namespace WordFudge.CloudService
         private void OnGetWordsFailure(PlayFabError error)
         {
             Debug.LogError($"Could not get title data.\n{error.GenerateErrorReport()}");
+            FinishedLoadingDatabase.Invoke(false);
         }
 
         private string GetDatabaseFilePath(string filename)
@@ -121,6 +132,7 @@ namespace WordFudge.CloudService
             string[] wordList = SaveSystem.LoadMultiLine(GetDatabaseFilePath(WORDS_KEY));
             if(wordList.Length == 0)
             {
+                Debug.Log("Could not find saved word list.  Copying packaged words list into save folder.");
                 TextAsset wordsAsset = Resources.Load<TextAsset>(GetDatabaseFilePath(WORDS_KEY));
                 Assert.IsNotNull(wordsAsset);
 
@@ -129,8 +141,9 @@ namespace WordFudge.CloudService
             }
 
             Database.InitializeWordList(wordList);
+            Debug.Log("Word list initialized!");
 
-            FinishedLoadingDatabase.Invoke();
+            FinishedLoadingDatabase.Invoke(true);
         }
     }
 }
