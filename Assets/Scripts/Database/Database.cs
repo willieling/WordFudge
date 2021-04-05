@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace WordFudge.DataBase
 {
@@ -8,7 +6,7 @@ namespace WordFudge.DataBase
     {
         private static readonly HashSet<string> words = new HashSet<string>();
 
-        public static void InitializeDictionary(HashSet<string> words)
+        public static void InitializeWordList(IEnumerable<string> words)
         {
             Database.words.Clear();
 
@@ -18,7 +16,7 @@ namespace WordFudge.DataBase
             }
         }
 
-        public static bool IsWord(char[] word)
+        public static bool IsValidWord(char[] word)
         {
             return words.Contains(new string(word));
         }
