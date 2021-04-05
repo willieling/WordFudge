@@ -12,11 +12,14 @@ namespace WordFudge.Ui
         private Button startGamebutton;
         [SerializeField]
         private Button leaderboardsButton;
+        [SerializeField]
+        private Leaderboards leaderboards;
 
         void Start()
         {
             Assert.IsNotNull(startGamebutton);
             Assert.IsNotNull(leaderboardsButton);
+            Assert.IsNotNull(leaderboards);
 
             startGamebutton.onClick.AddListener(OnStartGameButtonClicked);
             leaderboardsButton.onClick.AddListener(OnLeaderboardsbuttonClicked);
@@ -35,7 +38,7 @@ namespace WordFudge.Ui
 
         private void OnLeaderboardsbuttonClicked()
         {
-            throw new NotImplementedException();
+            leaderboards.Show();
         }
     }
 }

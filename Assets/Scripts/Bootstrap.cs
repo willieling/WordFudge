@@ -11,22 +11,25 @@ namespace WordFudge
     public class Bootstrap : MonoBehaviour
     {
         [SerializeField]
-        private MainMenu MainMenu;
+        private MainMenu mainMenu;
         [SerializeField]
-        private SplashScreen SplashScreen;
+        private SplashScreen splashScreen;
+        [SerializeField]
+        private Leaderboards leaderboards;
 
         private readonly DatabaseLoader dbLoader = new DatabaseLoader();
 
         private void Start()
         {
-            Assert.IsNotNull(MainMenu);
-            Assert.IsNotNull(SplashScreen);
+            Assert.IsNotNull(mainMenu);
+            Assert.IsNotNull(splashScreen);
+            Assert.IsNotNull(leaderboards);
 
             ShowSplashScreen();
 
             PlayFabRequests.Login(OnLoginSuccess, OnLoginFailure);
 
-            SplashScreen.Progress = 0;
+            splashScreen.Progress = 0;
             dbLoader.ProgressUpdate += OnProgressUpdate;
         }
 
@@ -37,7 +40,7 @@ namespace WordFudge
 
         private void OnProgressUpdate(float progress)
         {
-            SplashScreen.Progress = progress;
+            splashScreen.Progress = progress;
         }
 
         private void OnLoginSuccess(LoginResult result)
@@ -60,7 +63,7 @@ namespace WordFudge
             {
                 //todo error
                 Debug.LogError("Coulnd't load database.");
-                SplashScreen.MainText = "Coulnd't load database.";
+                splashScreen.MainText = "Coulnd't load database.";
 
                 return;
             }
@@ -72,14 +75,16 @@ namespace WordFudge
 
         private void ShowSplashScreen()
         {
-            MainMenu.Hide();
-            SplashScreen.Show();
+            mainMenu.Hide();
+            splashScreen.Show();
+            leaderboards.Hide();
         }
 
         private void ShowMainMenu()
         {
-            MainMenu.Show();
-            SplashScreen.Hide();
+            mainMenu.Show();
+            splashScreen.Hide();
+            leaderboards.Hide();
         }
     }
 }
