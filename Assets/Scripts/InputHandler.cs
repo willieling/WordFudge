@@ -89,12 +89,23 @@ namespace WordFudge
 
         private void MoveSelectedTile(BaseInputDetector.InputData inputData)
         {
+            if(selectedTile == null)
+            {
+                return;
+            }
             selectedTile.transform.position = new Vector3(inputData.position.x, inputData.position.y, selectedTile.transform.position.z);
         }
 
         private void DropTile(BaseInputDetector.InputData inputData)
         {
             WordFudgeHitResults results = DetectHitObjects(inputData);
+            if(results.tile == null)
+            {
+                // this can happen when dragging nothing
+                // which is a valid case
+                return;
+            }
+
             if(results.gameBoard != null)
             {
                 results.gameBoard.AddTile(selectedTile);

@@ -163,15 +163,18 @@ namespace WordFudge
 
         private Vector2Int GetClosestFreeIndex(GameObject child)
         {
+            Vector2 childPosition = child.transform.position;
             float minDistance = float.MaxValue;
             Vector2Int? index = null;
+
             foreach (Cell[] column in Cells)
             {
                 foreach (Cell cell in column)
                 {
-                    Vector2 distance = new Vector2(child.transform.position.x, child.transform.position.y) - cell.Position;
+                    Vector2 distance = new Vector2(childPosition.x, childPosition.y) - cell.Position;
                     if (cell.Object == null && distance.magnitude < minDistance)
                     {
+                        minDistance = distance.magnitude;
                         index = cell.Index;
                     }
                 }
