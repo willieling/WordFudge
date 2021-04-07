@@ -41,7 +41,7 @@ namespace WordFudge.Boards
                 tile.Initialize(letter);
 
                 heldTiles.Add(tile);
-                grid.AddChild(tile.gameObject, SnapGrid.CollisionResolution.NextFreeCell);
+                grid.AddChild(tile, SnapGrid.CollisionResolution.NextFreeCell);
             }
         }
 
@@ -68,7 +68,7 @@ namespace WordFudge.Boards
                 RefillTray();
             }
 
-            RemoveTileToGrid(tile);
+            RemoveTileFromGrid(tile);
         }
 
         private void RefillTray()

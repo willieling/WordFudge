@@ -22,6 +22,11 @@ namespace WordFudge
 
         private RectTransform rectTransform;
 
+        public WorldTile Up { get; set; }
+        public WorldTile Down { get; set; }
+        public WorldTile Left { get; set; }
+        public WorldTile Right { get; set; }
+
         public char Character { get; private set; }
 
         private void Awake()
@@ -54,6 +59,19 @@ namespace WordFudge
         public void ShowAsIncluded()
         {
             background.color = placedAndIncluded;
+        }
+
+        public void ClearNeighbourReferences()
+        {
+            if (Up != null) { Up.Down = null; }
+            if (Down != null) { Down.Up = null; }
+            if (Left != null) { Left.Right = null; }
+            if (Right != null) { Right.Left = null; }
+
+            Up = null;
+            Down = null;
+            Left = null;
+            Right = null;
         }
     }
 }

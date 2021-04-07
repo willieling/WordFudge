@@ -24,15 +24,16 @@ namespace WordFudge.Boards
             collider.size = rectTransform.rect.size;
         }
 
-        protected void AddTileToGrid(WorldTile tile, SnapGrid.CollisionResolution resolution)
+        protected Vector2Int AddTileToGrid(WorldTile tile, SnapGrid.CollisionResolution resolution)
         {
-            grid.AddChild(tile.gameObject, resolution);
+            return grid.AddChild(tile, resolution);
         }
 
-        protected void RemoveTileToGrid(WorldTile tile)
+        protected Vector2Int RemoveTileFromGrid(WorldTile tile)
         {
-            grid.RemoveChild(tile.gameObject);
+            Vector2Int index = grid.RemoveChild(tile);
             tile.transform.SetParent(dragSpace);
+            return index;
         }
     }
 }

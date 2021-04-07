@@ -31,8 +31,8 @@ namespace WordFudge
         [System.Diagnostics.DebuggerDisplay("{Index}: {Position} - {(Object != null ? Object.name : \"null\")}")]
         private struct Cell
         {
-            public GameObject Object;
-            public int x;
+            public MonoBehaviour Element;
+
             public Vector2Int Index { get; private set; }
             public Vector2 Position { get; private set; }
 
@@ -40,8 +40,7 @@ namespace WordFudge
             {
                 Position = new Vector2(xPosition, yPosition);
                 Index = new Vector2Int(column, row);
-                Object = null;
-                x = 0;
+                Element = null;
             }
         }
 
@@ -54,10 +53,14 @@ namespace WordFudge
 
         private RectTransform rectTransform;
 
-        private Cell[][] Cells;
-        private Vector2Int Dimensions;
+        // (0,0) is the bottom left corner
+        private Cell[][] cells;
 
-        private readonly Dictionary<GameObject, Vector2Int> objectMap = new Dictionary<GameObject, Vector2Int>();
+        private readonly Dictionary<MonoBehaviour, Vector2Int> elementMap = new Dictionary<MonoBehaviour, Vector2Int>();
+
+        private Vector2Int dimensions;
+
+        public Vector2Int Dimensions { get { return dimensions; } }
 
         private void Start()
         {
@@ -70,68 +73,85 @@ namespace WordFudge
             float width = rectTransform.rect.width * worldScale.x;
             float height = rectTransform.rect.height * worldScale.y;
 
-            float xTotalWidth = (cellSize.x + cellGap.x) * worldScale.x;
-            float yTotalWidth = (cellSize.y + cellGap.y) * worldScale.y;
+            float totalCellWidth = (cellSize.x + cellGap.x) * worldScale.x;
+            float totalCellHeight = (cellSize.y + cellGap.y) * worldScale.y;
 
-            Dimensions.x = Mathf.Max((int)(width / xTotalWidth), AVOID_ZERO);
-            Dimensions.y = Mathf.Max((int)(height / yTotalWidth), AVOID_ZERO);
+            dimensions.x = Mathf.Max((int)(width / totalCellWidth), AVOID_ZERO);
+            dimensions.y = Mathf.Max((int)(height / totalCellHeight), AVOID_ZERO);
 
-            Cells = new Cell[Dimensions.x][];
-            for (int x = 0; x < Dimensions.x; ++x)
+            cells = new Cell[dimensions.x][];
+            for (int x = 0; x < dimensions.x; ++x)
             {
-                Cells[x] = new Cell[Dimensions.y];
-                for (int y = 0; y < Dimensions.y; y++)
+                cells[x] = new Cell[dimensions.y];
+                for (int y = 0; y < dimensions.y; y++)
                 {
-                    float xPosition = rectTransform.position.x + xTotalWidth * GetXOffset(x);
-                    float yPosition = rectTransform.position.y + yTotalWidth * GetYOffset(y);
-                    Cells[x][y] = new Cell(xPosition, yPosition, x, y);
+                    float xPosition = rectTransform.position.x + totalCellWidth * GetXOffset(x);
+                    float yPosition = rectTransform.position.y + totalCellHeight * GetYOffset(y);
+                    cells[x][y] = new Cell(xPosition, yPosition, x, y);
                 }
             }
 
             float GetXOffset(int x)
             {
-                int lastIndex = Dimensions.x - 1;
+                int lastIndex = dimensions.x - 1;
                 return x - (float)lastIndex / 2;
             }
 
             float GetYOffset(int y)
             {
-                int lastIndex = Dimensions.y - 1;
+                int lastIndex = dimensions.y - 1;
                 return y - (float)lastIndex / 2;
             }
         }
 
-        public void AddChild(GameObject child, CollisionResolution resolution)
+        public Vector2Int AddChild(MonoBehaviour child, CollisionResolution resolution)
         {
             Vector2Int index = GetNextCellIndex(child, resolution);
 
             child.transform.SetParent(this.transform);
-            child.transform.position = Cells[index.x][index.y].Position;
+            child.transform.position = cells[index.x][index.y].Position;
 
-            if(objectMap.ContainsKey(child))
+            if(elementMap.ContainsKey(child))
             {
                 //todo show error, child should not be added twice
                 RemoveChild(child);
             }
 
-            Cells[index.x][index.y].Object = child;
-            objectMap.Add(child, index);
+            cells[index.x][index.y].Element = child;
+            elementMap.Add(child, index);
+
+            return index;
         }
 
-        public void RemoveChild(GameObject child)
+        public Vector2Int RemoveChild(MonoBehaviour child)
         {
-            if(!objectMap.TryGetValue(child, out Vector2Int index))
+            if(!elementMap.TryGetValue(child, out Vector2Int index))
             {
                 //todo error
             }
 
-            Cells[index.x][index.y].Object = null;
-            objectMap.Remove(child);
+            cells[index.x][index.y].Element = null;
+            elementMap.Remove(child);
 
             child.transform.SetParent(null);
+
+            return index;
         }
 
-        private Vector2Int GetNextCellIndex(GameObject child, CollisionResolution resolution)
+        public T GetElementAtIndex<T>(int x, int y) where T : MonoBehaviour
+        {
+            if (0 <= x
+                && x < dimensions.x
+                && 0 <= y
+                && y < dimensions.y)
+            {
+                return (T)cells[x][y].Element;
+            }
+
+            return null;
+        }
+
+        private Vector2Int GetNextCellIndex(MonoBehaviour child, CollisionResolution resolution)
         {
             switch(resolution)
             {
@@ -147,11 +167,11 @@ namespace WordFudge
 
         private Vector2Int GetNextCellIndex()
         {
-            foreach (Cell[] column in Cells)
+            foreach (Cell[] column in cells)
             {
                 foreach (Cell cell in column)
                 {
-                    if (cell.Object == null)
+                    if (cell.Element == null)
                     {
                         return cell.Index;
                     }
@@ -161,18 +181,18 @@ namespace WordFudge
             return new Vector2Int(-1, -1);
         }
 
-        private Vector2Int GetClosestFreeIndex(GameObject child)
+        private Vector2Int GetClosestFreeIndex(MonoBehaviour child)
         {
             Vector2 childPosition = child.transform.position;
             float minDistance = float.MaxValue;
             Vector2Int? index = null;
 
-            foreach (Cell[] column in Cells)
+            foreach (Cell[] column in cells)
             {
                 foreach (Cell cell in column)
                 {
                     Vector2 distance = new Vector2(childPosition.x, childPosition.y) - cell.Position;
-                    if (cell.Object == null && distance.magnitude < minDistance)
+                    if (cell.Element == null && distance.magnitude < minDistance)
                     {
                         minDistance = distance.magnitude;
                         index = cell.Index;
@@ -199,7 +219,7 @@ namespace WordFudge
         {
             if(showDebug)
             {
-                foreach(Cell[] column in Cells)
+                foreach(Cell[] column in cells)
                 {
                     foreach(Cell cell in column)
                     {
