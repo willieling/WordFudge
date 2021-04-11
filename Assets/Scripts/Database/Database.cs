@@ -16,9 +16,9 @@ namespace WordFudge.DataBase
             }
         }
 
-        public static bool IsValidWord(char[] word)
+        public static bool IsValidWord(string word)
         {
-            return words.Contains(new string(word));
+            return words.Contains(word);
         }
     }
 }

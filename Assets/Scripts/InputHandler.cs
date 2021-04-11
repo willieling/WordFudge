@@ -84,7 +84,7 @@ namespace WordFudge
                 throw new NotImplementedException("Can't drop a tile onto nothing");
             }
 
-            selectedTile.ShowPickUp();
+            selectedTile.SetVisualsAsPickedUp();
         }
 
         private void MoveSelectedTile(BaseInputDetector.InputData inputData)
@@ -106,7 +106,9 @@ namespace WordFudge
                 return;
             }
 
-            if(results.gameBoard != null)
+            selectedTile.SetVisualsAsPutDownAndExcluded();
+
+            if (results.gameBoard != null)
             {
                 results.gameBoard.AddTile(selectedTile);
             }
@@ -119,7 +121,6 @@ namespace WordFudge
                 throw new NotImplementedException("Can't drop a tile onto nothing");
             }
 
-            selectedTile.ShowPutDownAndExcluded();
             selectedTile = null;
         }
 
