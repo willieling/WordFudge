@@ -41,8 +41,8 @@ namespace WordFudge
 
         private RectTransform rectTransform;
 
-        private HashSet<WordContainer> horizontalWords = new HashSet<WordContainer>();
-        private HashSet<WordContainer> verticalWords = new HashSet<WordContainer>();
+        private HashSet<WordContainer> horizontalWords = new HashSet<WordContainer>(new WordContainerComparer());
+        private HashSet<WordContainer> verticalWords = new HashSet<WordContainer>(new WordContainerComparer());
 
         public WorldTile Up { get; set; }
         public WorldTile Down { get; set; }
@@ -123,7 +123,10 @@ namespace WordFudge
 
         public void AddHorizontalWord(WordContainer word)
         {
-            horizontalWords.Add(word);
+            if(!horizontalWords.Add(word))
+            {
+                Debug.LogWarning($"\'{name}\' already has the horizontal word {word.Word}");
+            }
         }
 
         public void RemoveHorizontalWord(WordContainer word)
@@ -136,7 +139,10 @@ namespace WordFudge
 
         public void AddVerticalWord(WordContainer word)
         {
-            verticalWords.Add(word);
+            if (!verticalWords.Add(word))
+            {
+                Debug.LogWarning($"\'{name}\' already has the vertical word {word.Word}");
+            }
         }
 
         public void RemoveVerticalWord(WordContainer word)

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -48,6 +49,19 @@ namespace WordFudge.ScoreSystem
                     }
                     break;
             }
+        }
+    }
+
+    public class WordContainerComparer : IEqualityComparer<WordContainer>
+    {
+        bool IEqualityComparer<WordContainer>.Equals(WordContainer word, WordContainer other)
+        {
+            return word.Word == other.Word;
+        }
+
+        int IEqualityComparer<WordContainer>.GetHashCode(WordContainer word)
+        {
+            return word.GetHashCode();
         }
     }
 

@@ -13,6 +13,8 @@ namespace WordFudge.ScoreSystem
 
         public List<TileMatrix> CreateMatrices(WorldTile tile)
         {
+            globalVisitedThisCalculationTiles.Add(tile);
+
             List<TileMatrix> matrices = new List<TileMatrix>();
 
             foreach(WordContainer word in tile.HorizontalWords)

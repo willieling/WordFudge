@@ -115,22 +115,29 @@ namespace WordFudge.ScoreSystem
 
             Assert.IsFalse(globalVisitedThisCalculationTiles.Count > gameBoard.TileCount);
 
-            WorldTile unvisited = null;
-            foreach (WorldTile onBoard in gameBoard.TilesOnBoard)
+            List<TileMatrix> matrices = null;
+            do
             {
-                if (!globalVisitedThisCalculationTiles.Contains(onBoard))
+                WorldTile unvisited = null;
+                foreach (WorldTile onBoard in gameBoard.TilesOnBoard)
                 {
-                    unvisited = onBoard;
-                    break;
+                    if (!globalVisitedThisCalculationTiles.Contains(onBoard))
+                    {
+                        unvisited = onBoard;
+                        break;
+                    }
                 }
-            }
-            Assert.IsNotNull(unvisited);
+                Assert.IsNotNull(unvisited);
 
-            List<TileMatrix> matrices = matrixFactory.CreateMatrices(unvisited);
-            foreach (TileMatrix matrix in matrices)
-            {
-                unfinishedMatrices.AddLast(matrix);
-            }
+                matrices = matrixFactory.CreateMatrices(unvisited);
+
+                //todo in game, put down "rag" then "dog" and make them not touching
+                //remove the a and debug why I have two matrices with the same word
+                foreach (TileMatrix matrix in matrices)
+                {
+                    unfinishedMatrices.AddLast(matrix);
+                }
+            } while (matrices.Count == 0 && globalVisitedThisCalculationTiles.Count < gameBoard.TileCount);
 
             return matrices.Count > 0;
         }
