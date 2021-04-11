@@ -40,38 +40,21 @@ namespace WordFudge.ScoreSystem
             ClearDataBuffers();
 
             List<TileMatrix> initialMatrices = matrixFactory.CreateMatrices(tile);
-            if (initialMatrices.Count > 0)
+            foreach (TileMatrix matrix in initialMatrices)
             {
-                foreach (TileMatrix matrix in initialMatrices)
-                {
-                    unfinishedMatrices.AddLast(matrix);
-                }
+                unfinishedMatrices.AddLast(matrix);
+            }
 
-                //todo handle the scenario where we have two discrete islands of tiles
-                //the do-while loop should also be within a do while loop?
-                return SolveForHighestScoreMatrix();
-            }
-            else
-            {
-                return TileMatrixScore.ZeroScore;
-            }
+            return SolveForHighestScoreMatrix();
         }
 
         public TileMatrixScore CalculateBestScoreMatrixFromUnvisitedTile()
         {
             ClearDataBuffers();
             AddNewMatricesFromGloballyUnvisitedTile();
-            if (unfinishedMatrices.Count > 0)
-            {
-                return SolveForHighestScoreMatrix();
-            }
-            else
-            {
-                return TileMatrixScore.ZeroScore;
-            }
+            return SolveForHighestScoreMatrix();
         }
 
-        //rename?
         private void ClearDataBuffers()
         {
             unfinishedMatrices.Clear();
@@ -81,6 +64,11 @@ namespace WordFudge.ScoreSystem
 
         private TileMatrixScore SolveForHighestScoreMatrix()
         {
+            if (unfinishedMatrices.Count == 0)
+            {
+                return TileMatrixScore.ZeroScore;
+            }
+
             do
             {
                 do

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Assertions;
 using WordFudge.DataBase;
 
@@ -37,6 +38,7 @@ namespace WordFudge.ScoreSystem
                     if (Database.IsValidWord(word))
                     {
                         WordContainer container = new WordContainer(word, line.GetRange(leftIndex, length), axis);
+                        Debug.Log($"[Tile {placedTile.Letter}]Found new word {container.Word}");
                         for (int k = leftIndex; k <= rightIndex; ++k)
                         {
                             switch(axis)
