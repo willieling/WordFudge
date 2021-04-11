@@ -63,11 +63,11 @@ namespace WordFudge
 
         public void Initialize(char character)
         {
-            Letter = character;
+            Letter = char.ToUpper(character);
             text.text = Letter.ToString();
 
 #if UNITY_EDITOR
-            gameObject.name += $" - {character}";
+            gameObject.name += $" - {Letter}";
 #endif
         }
 

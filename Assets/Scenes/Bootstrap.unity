@@ -1607,4 +1607,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcdfe8bfa307d404fa1a4004d9042ad0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingLetters: helloworld
+  useCheatLetters: 1
+  startingLetters: yragdog
