@@ -54,6 +54,12 @@ namespace WordFudge.Boards
 
         public char[] GetStartingHandLetters()
         {
+#if UNITY_EDITOR
+            if(BootstrapCheats.Instance.HasStartingLetters)
+            {
+                return BootstrapCheats.Instance.StartingLetters.ToCharArray();
+            }
+#endif // UNITY_EDITOR
             return GetRandomLetters(startingLettersCount);
         }
 
