@@ -110,6 +110,7 @@ namespace WordFudge
 
             child.transform.SetParent(this.transform);
             child.transform.position = cells[index.x][index.y].Position;
+            ((WorldTile)child).SetIndex(index);
 
             if(elementMap.ContainsKey(child))
             {
@@ -133,19 +134,20 @@ namespace WordFudge
             cells[index.x][index.y].Element = null;
             elementMap.Remove(child);
 
+            ((WorldTile)child).ClearIndex();
             child.transform.SetParent(null);
 
             return index;
         }
 
-        public T GetElementAtIndex<T>(int x, int y) where T : MonoBehaviour
+        public T GetElementAtIndex<T>(int row, int col) where T : MonoBehaviour
         {
-            if (0 <= x
-                && x < dimensions.x
-                && 0 <= y
-                && y < dimensions.y)
+            if (0 <= row
+                && row < dimensions.x
+                && 0 <= col
+                && col < dimensions.y)
             {
-                return (T)cells[x][y].Element;
+                return (T)cells[row][col].Element;
             }
 
             return null;

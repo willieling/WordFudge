@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using WordFudge.ScoreSystem;
@@ -12,6 +11,7 @@ namespace WordFudge.Boards
         private readonly OptimalTileMatrixSolver solver = new OptimalTileMatrixSolver();
 
         private readonly HashSet<WorldTile> tilesOnBoard = new HashSet<WorldTile>();
+        private readonly Dictionary<Vector2Int, WorldTile> tileMap = new Dictionary<Vector2Int, WorldTile>();
 
         public IReadOnlyCollection<WorldTile> TilesOnBoard { get { return tilesOnBoard; } }
 
@@ -38,6 +38,7 @@ namespace WordFudge.Boards
             }
 
             Vector2Int tileIndex = AddTileToGrid(tile, SnapGrid.CollisionResolution.ClosestFreeCell);
+            tileMap.Add(tileIndex, tile);
 
             WorldTile neighbour = grid.GetElementAtIndex<WorldTile>(tileIndex.x + 1, tileIndex.y);
             if(neighbour != null)
@@ -88,6 +89,8 @@ namespace WordFudge.Boards
                 return;
             }
 
+            tileMap.Remove(tile.Index);
+
             RemoveTileFromGrid(tile);
             tile.UnregisterFromGameplayEvents();
 
@@ -98,6 +101,11 @@ namespace WordFudge.Boards
 
             TileMatrixScore scoreMatrix = solver.CalculateBestScoreMatrixFromUnvisitedTile();
             scoreHolder.UpdateScore(scoreMatrix);
+        }
+
+        public WorldTile GetTile(int row, int col)
+        {
+            return grid.GetElementAtIndex<WorldTile>(row, col);
         }
     }
 }

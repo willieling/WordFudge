@@ -41,13 +41,15 @@ namespace WordFudge
 
         private RectTransform rectTransform;
 
-        private HashSet<WordContainer> horizontalWords = new HashSet<WordContainer>(new WordContainerComparer());
-        private HashSet<WordContainer> verticalWords = new HashSet<WordContainer>(new WordContainerComparer());
+        private HashSet<WordContainer> horizontalWords = new HashSet<WordContainer>(new WordContainer.Comparer());
+        private HashSet<WordContainer> verticalWords = new HashSet<WordContainer>(new WordContainer.Comparer());
 
         public WorldTile Up { get; set; }
         public WorldTile Down { get; set; }
         public WorldTile Left { get; set; }
         public WorldTile Right { get; set; }
+
+        public Vector2Int Index { get; private set; }
 
         public IReadOnlyCollection<WordContainer> HorizontalWords { get { return horizontalWords; } }
         public IReadOnlyCollection<WordContainer> VerticalWords { get { return verticalWords; } }
@@ -96,6 +98,16 @@ namespace WordFudge
             background.color = placedAndIncluded;
         }
 
+        public void SetIndex(Vector2Int index)
+        {
+            Index = index;
+        }
+
+        public void ClearIndex()
+        {
+            Index = new Vector2Int(-1, -1);
+        }
+
         public void ClearNeighbourReferencesAndAssociatedWords()
         {
             if (Up != null) { Up.Down = null; }
@@ -141,6 +153,7 @@ namespace WordFudge
         {
             if (!verticalWords.Add(word))
             {
+                //todo error
                 Debug.LogWarning($"\'{name}\' already has the vertical word {word.Word}");
             }
         }
@@ -150,6 +163,7 @@ namespace WordFudge
             if (!verticalWords.Remove(word))
             {
                 //todo error
+                Debug.LogWarning($"\'{name}\' already has the vertical word {word.Word}");
             }
         }
 
@@ -169,9 +183,32 @@ namespace WordFudge
             }
         }
 
-        public bool ShareAssociatedWord(WorldTile otherTile)
+        public bool ShareAssociatedWord(WorldTile otherTile, Axis axis)
         {
-            throw new System.Exception("not implemented");
+            switch (axis)
+            {
+                case Axis.Horizontal:
+                    foreach (WordContainer word in HorizontalWords)
+                    {
+                        if(word.ContainsTile(otherTile))
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                case Axis.Vertical:
+                default:
+                    foreach (WordContainer word in VerticalWords)
+                    {
+                        if (word.ContainsTile(otherTile))
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+            }
         }
 
         private void OnNewHighScore(TileMatrixScore score)
