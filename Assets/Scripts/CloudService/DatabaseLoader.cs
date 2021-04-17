@@ -164,9 +164,15 @@ namespace WordFudge.CloudService
             Database.InitializeWordList(wordList);
             Debug.Log("Word list initialized!");
 
-            UpdateProgress(1, 0);
-
             FinishedLoadingDatabase.Invoke(true);
         }
+
+#if UNITY_EDITOR
+        public void DebugLoadSavedWordList(Action<bool> callback)
+        {
+            FinishedLoadingDatabase += callback;
+            LoadSavedWordList();
+        }
+#endif
     }
 }
