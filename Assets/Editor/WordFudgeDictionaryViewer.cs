@@ -8,8 +8,8 @@ namespace WordFudge.DataBase
     public class WordFudgeDictionaryViewer : EditorWindow
     {
         private static readonly HashSet<string> words = new HashSet<string>();
-        private string inputWord = null;
-        private bool loaded = false;
+        private string inputWord = string.Empty;
+        private bool databaseLoaded = false;
 
         private GUIStyle redTextStyle = new GUIStyle();
         private GUIStyle greenTextStyle = new GUIStyle();
@@ -24,8 +24,12 @@ namespace WordFudge.DataBase
 
         private void OnEnable()
         {
-            DatabaseLoader loader = new DatabaseLoader();
-            loader.DebugLoadSavedWordList(OnLoadDatabase);
+            databaseLoaded = Database.IsLoaded();
+            if (!databaseLoaded)
+            {
+                DatabaseLoader loader = new DatabaseLoader();
+                loader.DebugLoadSavedWordList(OnLoadDatabase);
+            }
 
             redTextStyle.normal.textColor = Color.red;
             greenTextStyle.normal.textColor = Color.green;
@@ -35,7 +39,7 @@ namespace WordFudge.DataBase
         {
             const int WORD_LABEL_WIDTH = 50;
 
-            if (loaded)
+            if (databaseLoaded)
             {
                 GUILayout.BeginHorizontal();
                 {
@@ -62,7 +66,7 @@ namespace WordFudge.DataBase
 
         private void OnLoadDatabase(bool loaded)
         {
-            this.loaded = loaded;
+            this.databaseLoaded = loaded;
         }
     }
 }

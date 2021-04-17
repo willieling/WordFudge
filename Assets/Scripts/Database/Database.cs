@@ -6,6 +6,11 @@ namespace WordFudge.DataBase
     {
         private static readonly HashSet<string> words = new HashSet<string>();
 
+        public static bool IsLoaded()
+        {
+            return words.Count > 0;
+        }
+
         public static void InitializeWordList(IEnumerable<string> words)
         {
             Database.words.Clear();
