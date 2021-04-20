@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,6 +7,7 @@ using WordFudge.ScoreSystem;
 
 namespace WordFudge
 {
+    [DebuggerDisplay("{Letter} - {Index}")]
     public class WorldTile : MonoBehaviour
     {
         public struct Neighbors
@@ -137,7 +139,7 @@ namespace WordFudge
         {
             if(!horizontalWords.Add(word))
             {
-                Debug.LogWarning($"\'{name}\' already has the horizontal word {word.Word}");
+                UnityEngine.Debug.LogWarning($"\'{name}\' already has the horizontal word {word.Word}");
             }
         }
 
@@ -154,7 +156,7 @@ namespace WordFudge
             if (!verticalWords.Add(word))
             {
                 //todo error
-                Debug.LogWarning($"\'{name}\' already has the vertical word {word.Word}");
+                UnityEngine.Debug.LogWarning($"\'{name}\' already has the vertical word {word.Word}");
             }
         }
 
@@ -163,7 +165,7 @@ namespace WordFudge
             if (!verticalWords.Remove(word))
             {
                 //todo error
-                Debug.LogWarning($"\'{name}\' already has the vertical word {word.Word}");
+                UnityEngine.Debug.LogWarning($"\'{name}\' already has the vertical word {word.Word}");
             }
         }
 
@@ -183,32 +185,30 @@ namespace WordFudge
             }
         }
 
-        public bool ShareAssociatedWord(WorldTile otherTile, Axis axis)
+        public bool ShareAssociatedWordHorizontally(WorldTile otherTile)
         {
-            switch (axis)
+            foreach (WordContainer word in HorizontalWords)
             {
-                case Axis.Horizontal:
-                    foreach (WordContainer word in HorizontalWords)
-                    {
-                        if(word.ContainsTile(otherTile))
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                case Axis.Vertical:
-                default:
-                    foreach (WordContainer word in VerticalWords)
-                    {
-                        if (word.ContainsTile(otherTile))
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
+                if (word.ContainsTile(otherTile))
+                {
+                    return true;
+                }
             }
+
+            return false;
+        }
+
+        public bool ShareAssociatedWordVertically(WorldTile otherTile)
+        {
+            foreach (WordContainer word in VerticalWords)
+            {
+                if (word.ContainsTile(otherTile))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void OnNewHighScore(TileMatrixScore score)

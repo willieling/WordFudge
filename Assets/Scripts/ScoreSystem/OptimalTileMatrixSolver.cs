@@ -48,6 +48,7 @@ namespace WordFudge.ScoreSystem
                 unfinishedMatrices.AddLast(matrix);
             }
 
+            Debug.Log($"<color=yellow>Starting search from tile {tile} with {unfinishedMatrices.Count} matrices.</color>");
             return SolveForHighestScoreMatrix();
         }
 
@@ -55,6 +56,9 @@ namespace WordFudge.ScoreSystem
         {
             ClearDataBuffers();
             AddNewMatricesFromGloballyUnvisitedTile();
+
+            Debug.Log($"<color=yellow>Starting search from a removed tile with {unfinishedMatrices.Count} matrices.</color>");
+
             return SolveForHighestScoreMatrix();
         }
 
@@ -104,7 +108,7 @@ namespace WordFudge.ScoreSystem
                 return false;
             }
 
-            Assert.IsFalse(globalVisitedThisCalculationTiles.Count > gameBoard.TileCount);
+            Assert.IsFalse(globalVisitedThisCalculationTiles.Count > gameBoard.TileCount, $"We've reportedly visited more tiles than exist on the gameboard.");
 
             List<TileMatrix> matrices = null;
             do
@@ -135,60 +139,153 @@ namespace WordFudge.ScoreSystem
 
         private void FullyExploreAndGenerateAlternateMatrices()
         {
-            Axis oppositeAxis = currentMatrix.LastAddedWord.Axis.GetOppositeAxis();
+            Debug.Log($"<color=magenta>Starting exploration of matrix with last added word: {currentMatrix.LastAddedWord}</color>");
 
-            //for this iteration, we're just looking at the immediate perpendicular words to the first word in the matrix
-            IReadOnlyCollection<WordContainer>[] candidateWords = new IReadOnlyCollection<WordContainer>[currentMatrix.LastAddedWord.Tiles.Count];
-            for (int i = 0; i < currentMatrix.LastAddedWord.Tiles.Count; ++i)
+            //remove me
+            int iterations = 0;
+            Axis oppositeAxis;
+            do
             {
-                candidateWords[i] = currentMatrix.LastAddedWord.Tiles[i].GetAssociatedWordsOnAxis(oppositeAxis);
-            }
+                oppositeAxis = currentMatrix.LastAddedWord.Axis.GetOppositeAxis();
 
-            switch (oppositeAxis)
+                IReadOnlyCollection<WordContainer>[] candidateWords = new IReadOnlyCollection<WordContainer>[currentMatrix.LastAddedWord.Tiles.Count];
+                for (int index = 0, lineIndex = currentMatrix.LastAddedWord.FirstTileIndex; index < currentMatrix.LastAddedWord.Tiles.Count; ++index, ++lineIndex)
+                {
+                    if (currentMatrix.PreviousLastAddedWord == null || lineIndex != currentMatrix.PreviousLastAddedWord.LineIndex)
+                    {
+                        candidateWords[index] = currentMatrix.LastAddedWord.Tiles[index].GetAssociatedWordsOnAxis(oppositeAxis);
+                    }
+                    else
+                    {
+                        //if we just came from here, don't go back
+                        candidateWords[index] = new List<WordContainer>();
+                    }
+                }
+
+                switch (oppositeAxis)
+                {
+                    case Axis.Horizontal:
+                        {
+                            bool createdPermutations = CreateAndQueueValidPermutations(candidateWords, currentMatrix.HorizontalWords);
+
+                            // We want to generate every permutation possible but also assign one of the permutations to our current matrix
+                            // since we automatically queue N matrices, detach the last one and make it the current matrix
+                            // the previous current matrix should be GC'd
+                            if (createdPermutations && HasUnfinishedMatrices())
+                            {
+                                currentMatrix = DetachLastUnfinished();
+                            }
+                        }
+                        break;
+
+                    case Axis.Vertical:
+                        {
+                            bool createdPermutations = CreateAndQueueValidPermutations(candidateWords, currentMatrix.VerticalWords);
+
+                            if (createdPermutations && HasUnfinishedMatrices())
+                            {
+                                currentMatrix = DetachLastUnfinished();
+                            }
+                        }
+                        break;
+                }
+
+                ++iterations;
+            } while (CanCurrentMatrixStillExplore(oppositeAxis) && iterations < 100);
+
+            Debug.Log($"<color=orange>Finished an exploration in {iterations} iterations</color>");
+        }
+
+        private bool CanCurrentMatrixStillExplore(Axis lastWordAxis)
+        {
+            //todo check that the words isn't already added
+            switch (lastWordAxis.GetOppositeAxis())
             {
                 case Axis.Horizontal:
+                    foreach (WorldTile tile in currentMatrix.LastAddedWord.Tiles)
                     {
-                        CreateAndQueueValidPermutations(candidateWords, currentMatrix.HorizontalWords);
-
-                        // We want to generate every permutation possible but also assign one of the permutations to our current matrix
-                        // since we automatically queue N matrices, detach the last one and give it's data to the original matrix
-                        // the last matrix should be GC'd
-                        if (HasUnfinishedMatrices())
-                        {
-                            TileMatrix lastMatrix = DetachLastUnfinished();
-                            currentMatrix.AddHorizontalWord(lastMatrix.LastAddedWord);
-                        }
+                        return HasUnvisitedWord(tile.HorizontalWords);
                     }
-                    break;
 
+                    return false;
                 case Axis.Vertical:
+                default:
+                    foreach (WorldTile tile in currentMatrix.LastAddedWord.Tiles)
                     {
-                        CreateAndQueueValidPermutations(candidateWords, currentMatrix.VerticalWords);
-
-                        if (HasUnfinishedMatrices())
-                        {
-                            TileMatrix lastMatrix = DetachLastUnfinished();
-                            currentMatrix.AddVerticalWord(lastMatrix.LastAddedWord);
-                        }
+                        return HasUnvisitedWord(tile.VerticalWords);
                     }
-                    break;
+
+                    return false;
             }
         }
 
-        private void CreateAndQueueValidPermutations(IReadOnlyCollection<WordContainer>[] candidateWords, IReadOnlyCollection<WordContainer> matrixAssociatedWords)
+        private bool HasUnvisitedWord(IReadOnlyCollection<WordContainer> associatedWords)
         {
+            if (associatedWords.Count > 0)
+            {
+                foreach (WordContainer word in associatedWords)
+                {
+                    if (currentMatrix.HasVisitedWord(word))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool CreateAndQueueValidPermutations(IReadOnlyCollection<WordContainer>[] candidateWords, IReadOnlyCollection<WordContainer> matrixAssociatedWords)
+        {
+            bool createdPermutations = false;
+
             foreach (IReadOnlyCollection<WordContainer> candidateWordsLine in candidateWords)
             {
                 foreach (WordContainer candidateWord in candidateWordsLine)
                 {
-                    //need to create permutations here
-                    if (!IsGrating(candidateWord, matrixAssociatedWords))
+                    Debug.Log($"Exploring '{currentMatrix.LastAddedWord}' -> '{candidateWord}'");
+                    AddWordToGloballyVisitedTiles(candidateWord);
+
+                    if (!currentMatrix.HasVisitedWord(candidateWord) && !IsGrating(candidateWord, matrixAssociatedWords))
                     {
+#if UNITY_EDITOR
+                        if (currentMatrix.LastAddedWord == candidateWord)
+                        {
+                            throw new Exception("Trying to re-add the last added word.");
+                        }
+#endif
+                        Debug.Log($"<color=green>Create permutation.  Base {currentMatrix.LastAddedWord} -> {candidateWord}</color>");
+
                         TileMatrix newMatrix = currentMatrix.DeepClone();
-                        newMatrix.AddHorizontalWord(candidateWord);
+                        switch (candidateWord.Axis)
+                        {
+                            case Axis.Horizontal:
+                                newMatrix.AddHorizontalWord(candidateWord);
+                                break;
+                            case Axis.Vertical:
+                                newMatrix.AddVerticalWord(candidateWord);
+                                break;
+                        }
                         QueueTileMatrix(newMatrix);
+                        createdPermutations = true;
+                    }
+                    else
+                    {
+                        Debug.Log($"<color=red>{candidateWord} rejected for already being visited or grating</color>");
                     }
                 }
+            }
+
+            return createdPermutations;
+        }
+
+        private void AddWordToGloballyVisitedTiles(WordContainer word)
+        {
+            foreach(WorldTile tile in word.Tiles)
+            {
+                globalVisitedThisCalculationTiles.Add(tile);
             }
         }
 
@@ -198,10 +295,12 @@ namespace WordFudge.ScoreSystem
             {
                 if(IsGrating(candidateWord, associatedWord))
                 {
+                    Debug.Log($"<color=red>Candidate word '{candidateWord}' grates with associated word '{associatedWord}'</color>");
                     return true;
                 }
             }
 
+            Debug.Log($"<color=green>{candidateWord} is a valid word and doesn't grate with anything.</color>");
             return false;
         }
 
@@ -210,7 +309,9 @@ namespace WordFudge.ScoreSystem
             const int INLINE = 0;
             const int PARLLEL_NOT_INLINE = 1;
 
-            Assert.IsTrue(candidateWord.Axis == associatedWord.Axis);
+            Assert.IsTrue(candidateWord.Axis == associatedWord.Axis, $"{candidateWord} and {associatedWord} have different orientations but are being compared for grating.");
+
+            AddWordToGloballyVisitedTiles(candidateWord);
 
             int parallelDistance = Math.Abs(associatedWord.LineIndex - candidateWord.LineIndex);
             switch (parallelDistance)
@@ -225,43 +326,33 @@ namespace WordFudge.ScoreSystem
                     return false;
 
                 case PARLLEL_NOT_INLINE:
-                    Vector2Int range = GetRubbingRange(candidateWord, associatedWord);
-
-                    WordContainer higherWord;
-                    WordContainer lowerWord;
-                    bool candidateLower = candidateWord.LineIndex < associatedWord.LineIndex;
-                    if(candidateLower)
-                    {
-                        higherWord = associatedWord;
-                        lowerWord = candidateWord;
-                    }
-                    else
-                    {
-                        higherWord = candidateWord;
-                        lowerWord = associatedWord;
-                    }
+                    WordContainer lowerWord = candidateWord.LineIndex < associatedWord.LineIndex ? candidateWord : associatedWord;
 
                     switch (candidateWord.Axis)
                     {
                         case Axis.Horizontal:
-                            for(int col = range.x; col <= range.y; ++col)
                             {
-                                if (AreTilesGrating(lowerWord.LineIndex, col, higherWord))
+                                Vector2Int range = GetRubbingRangeHorizontal(candidateWord, associatedWord);
+                                for (int row = range.x; row <= range.y; ++row)
                                 {
-                                    return true;
+                                    if (AreTilesGratingVertically(row, lowerWord.LineIndex))
+                                    {
+                                        return true;
+                                    }
                                 }
                             }
-
                             break;
                         case Axis.Vertical:
-                            for (int row = range.x; row <= range.y; ++row)
                             {
-                                if (AreTilesGrating(row, lowerWord.LineIndex, higherWord))
+                                Vector2Int range = GetRubbingRangeVertical(candidateWord, associatedWord);
+                                for (int col = range.x; col <= range.y; ++col)
                                 {
-                                    return true;
+                                    if (AreTilesGratingHorizontally(lowerWord.LineIndex, col))
+                                    {
+                                        return true;
+                                    }
                                 }
                             }
-
                             break;
                     }
                     return false;
@@ -271,13 +362,20 @@ namespace WordFudge.ScoreSystem
             }
         }
 
-        private bool AreTilesGrating(int row, int col, WordContainer higherWord)
+        private bool AreTilesGratingHorizontally(int row, int col)
         {
             WorldTile lowerTile = gameBoard.GetTile(row, col);
-            Assert.IsNotNull(lowerTile);
-            Assert.IsTrue(higherWord.ContainsTile(lowerTile.Up));
+            Assert.IsNotNull(lowerTile, $"Tried to get tile at ({row},{col})");
 
-            return !lowerTile.ShareAssociatedWord(lowerTile.Up, Axis.Horizontal);
+            return !lowerTile.ShareAssociatedWordHorizontally(lowerTile.Right);
+        }
+
+        private bool AreTilesGratingVertically(int row, int col)
+        {
+            WorldTile lowerTile = gameBoard.GetTile(row, col);
+            Assert.IsNotNull(lowerTile, $"Tried to get tile at ({row},{col})");
+
+            return !lowerTile.ShareAssociatedWordVertically(lowerTile.Up);
         }
 
         private bool CheckIfNeighboursAreAlreadyVisisted(WorldTile tile)
@@ -288,7 +386,7 @@ namespace WordFudge.ScoreSystem
                 || currentMatrix.HasVisitedTile(tile.Right);
         }
 
-        private Vector2Int GetRubbingRange(WordContainer word, WordContainer otherWord)
+        private Vector2Int GetRubbingRangeHorizontal(WordContainer word, WordContainer otherWord)
         {
             // https://scicomp.stackexchange.com/questions/26258/the-easiest-way-to-find-intersection-of-two-intervals
             if (word.FirstTileIndex > otherWord.LastTileIndex
@@ -297,7 +395,21 @@ namespace WordFudge.ScoreSystem
                 return Vector2Int.zero;
             }
 
-            return new Vector2Int(Mathf.Max(word.FirstTileIndex, otherWord.FirstTileIndex), Mathf.Max(word.FirstTileIndex, otherWord.FirstTileIndex));
+            return new Vector2Int(Mathf.Max(word.FirstTileIndex, otherWord.FirstTileIndex), Mathf.Min(word.LastTileIndex, otherWord.LastTileIndex));
+        }
+
+        private Vector2Int GetRubbingRangeVertical(WordContainer word, WordContainer otherWord)
+        {
+            // https://scicomp.stackexchange.com/questions/26258/the-easiest-way-to-find-intersection-of-two-intervals
+            // vertical words are only valid from top to bottom, so we need to invert how we do the checks.
+            // board origin is in the bottom left
+            if (word.FirstTileIndex < otherWord.LastTileIndex
+                || otherWord.FirstTileIndex < word.LastTileIndex)
+            {
+                return Vector2Int.zero;
+            }
+
+            return new Vector2Int(Mathf.Max(word.LastTileIndex, otherWord.LastTileIndex), Mathf.Min(word.FirstTileIndex, otherWord.FirstTileIndex));
         }
 
         private bool HasUnfinishedMatrices()
@@ -329,29 +441,46 @@ namespace WordFudge.ScoreSystem
 //there's going to be invalid matrices generated
 
 /*  todo an eventual optimization
-*
-*   super word: a word that completely encompasses another word
-*   example:
-*       ow   <- base word
-*       snow <- super word
-*       wind <- NOT a super word because 'o' is not in front of 'w'
-*   
-*   when scanning a word, any new matrices a word generates can be shared with a super word (assuming the associated word history is the same)
-*   this is because the possible permutations of a larger word are a super set of the possible permutations of a smaller word
-*/
+ *
+ *   super word: a word that completely encompasses another word
+ *   example:
+ *       ow   <- base word
+ *       snow <- super word
+ *       wind <- NOT a super word because 'o' is not in front of 'w'
+ *   
+ *   when scanning a word, any new matrices a word generates can be shared with a super word (assuming the associated word history is the same)
+ *   this is because the possible permutations of a larger word are a super set of the possible permutations of a smaller word
+ */
+
+/*  todo, try and detect circular matrices to avoid redundant calculations
+ *  example:
+ *  DOOR
+ *  E  O
+ *  A  O
+ *  LEFT
+ *    O
+ *    R
+ * 
+ *  If we dropped the R tile last, our first word would be FOOT and the second would be LEFT.
+ *  However, there would be a permutation at DEAL and ROOT, and both matrices would end up circling around.
+ *  We need to try and eventually find a way to detect that a matrix has become redundant.
+ *  
+ *  Maybe create a queue that only stores permutations created per matrix?  At the end, when that matrix is completed,
+ *  check any permutations for the LastAddedWord.  If that word exists within the just completed matrix, the permutation is redudant?
+ * */
 
 /* Two words are grating if are
-* - parallel
-* -- not co-linear (they do not exist on the same line)
-* - touching
-* - for all pairs of touching tiles there exists one pair that is not part of a word
-* 
-* grating ex:
-* is grating
-*   TRY
-*    DOG
-*    
-*  not grating
-*   CAT
-*    TOP
-* */
+ * - parallel
+ * -- not co-linear (they do not exist on the same line)
+ * - touching
+ * - for all pairs of touching tiles there exists one pair that is not part of a word
+ * 
+ * grating ex:
+ * is grating
+ *   TRY
+ *    DOG
+ *    
+ *  not grating
+ *   CAT
+ *    TOP
+ * */

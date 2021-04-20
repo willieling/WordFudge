@@ -13,7 +13,7 @@ namespace WordFudge.ScoreSystem
     /// <summary>
     /// Class that contains a word and a reference to all tiles in the word.
     /// </summary>
-    [DebuggerDisplay("{Word} - {Axis}")]
+    [DebuggerDisplay("{Word}.{guid} - {Axis} - Line {LineIndex}")]
     public class WordContainer
     {
         private readonly List<WorldTile> tiles;
@@ -56,7 +56,7 @@ namespace WordFudge.ScoreSystem
             Assert.IsNotNull(tiles);
             Assert.IsTrue(tiles.Count > 0);
 
-            guid = new Guid();
+            guid = Guid.GetGuid();
 
             Word = word;
             this.tiles = tiles;
@@ -99,6 +99,47 @@ namespace WordFudge.ScoreSystem
         public bool ContainsTile(WorldTile tile)
         {
             return tilesSet.Contains(tile);
+        }
+
+        public override string ToString()
+        {
+            return $"{Word} ({Axis})";
+        }
+
+        public override bool Equals(object obj)
+        {
+            WordContainer word = obj as WordContainer;
+            if(word == null)
+            {
+                return false;
+            }
+
+            return guid == word.guid;
+        }
+
+        public override int GetHashCode()
+        {
+            return guid.GetHashCode();
+        }
+
+        public static bool operator ==(WordContainer word, WordContainer other)
+        {
+            if(word is null ^ other is null)
+            {
+                return false;
+            }
+
+            if(word is null && other is null)
+            {
+                return true;
+            }
+
+            return word.guid == other.guid;
+        }
+
+        public static bool operator !=(WordContainer word, WordContainer other)
+        {
+            return word.guid != other.guid;
         }
 
         public class Comparer : IEqualityComparer<WordContainer>

@@ -38,7 +38,7 @@ namespace WordFudge.ScoreSystem
                     if (Database.IsValidWord(word))
                     {
                         WordContainer container = new WordContainer(word, line.GetRange(leftIndex, length), axis);
-                        Debug.Log($"[Tile {placedTile.Letter}]Found new word {container.Word}");
+                        Debug.Log($"<color=cyan>[Tile {placedTile.Letter}] Found new word {container.Word}</color>");
                         for (int k = leftIndex; k <= rightIndex; ++k)
                         {
                             switch(axis)

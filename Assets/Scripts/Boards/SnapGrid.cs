@@ -121,6 +121,8 @@ namespace WordFudge
             cells[index.x][index.y].Element = child;
             elementMap.Add(child, index);
 
+            Log("green", $"[{name}] Added tile to ({index})");
+
             return index;
         }
 
@@ -136,6 +138,8 @@ namespace WordFudge
 
             ((WorldTile)child).ClearIndex();
             child.transform.SetParent(null);
+
+            Log("red", $"[{name}] Removed tile from ({index})");
 
             return index;
         }
@@ -216,6 +220,12 @@ namespace WordFudge
 #if UNITY_EDITOR
         [SerializeField]
         bool showDebug = false;
+
+        [System.Diagnostics.Conditional("UNITY_EDITOR")]
+        private void Log(string color, string message)
+        {
+            Debug.Log($"<color={color}>[SnapGrid] {message}</color>");
+        }
 
         private void OnDrawGizmos()
         {

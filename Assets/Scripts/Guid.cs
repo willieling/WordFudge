@@ -1,15 +1,19 @@
+using System.Diagnostics;
+
 namespace WordFudge
 {
+    [DebuggerDisplay("{guid}")]
     public struct Guid
     {
         private static int counter = 0;
 
-        private readonly int guid;
+        private int guid;
 
-        // Structs can't have parameterless constructors so we're adding one to get around it
-        public Guid(int _ = 0)
+        public static Guid GetGuid()
         {
-            guid = counter++;
+            Guid guid = new Guid();
+            guid.guid = counter++;
+            return guid;
         }
 
         public static bool operator ==(Guid guid, Guid other)
@@ -36,6 +40,11 @@ namespace WordFudge
         public override int GetHashCode()
         {
             return guid;
+        }
+
+        public override string ToString()
+        {
+            return guid.ToString();
         }
     }
 }

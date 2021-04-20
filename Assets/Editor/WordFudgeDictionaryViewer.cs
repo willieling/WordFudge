@@ -18,7 +18,7 @@ namespace WordFudge.DataBase
         static void Init()
         {
             // Get existing open window or if none, make a new one:
-            WordFudgeDictionaryViewer window = (WordFudgeDictionaryViewer)EditorWindow.GetWindow(typeof(WordFudgeDictionaryViewer));
+            WordFudgeDictionaryViewer window = (WordFudgeDictionaryViewer)GetWindow(typeof(WordFudgeDictionaryViewer));
             window.Show();
         }
 
