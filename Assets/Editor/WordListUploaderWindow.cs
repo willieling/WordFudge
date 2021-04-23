@@ -20,7 +20,7 @@ namespace WordFudgeEditor.Database
         private readonly WordListUploader uploader = new WordListUploader();
 
         [MenuItem("Word Fudge/Word List Uploader")]
-        static void Init()
+        private static void Init()
         {
             // Get existing open window or if none, make a new one:
             WordListUploaderWindow window = (WordListUploaderWindow)EditorWindow.GetWindow(typeof(WordListUploaderWindow));

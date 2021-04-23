@@ -15,6 +15,9 @@ namespace WordFudge.Boards
 
         public IReadOnlyCollection<WorldTile> TilesOnBoard { get { return tilesOnBoard; } }
 
+#if UNITY_EDITOR
+        public OptimalTileMatrixSolver Solver { get { return solver; } }
+#endif //UNITY_EDITOR
 
         //todo, store the history of placed tiles so we can easily handle removing a tile?
 

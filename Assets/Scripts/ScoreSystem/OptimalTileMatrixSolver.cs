@@ -24,6 +24,10 @@ namespace WordFudge.ScoreSystem
         private GameBoard gameBoard = null;
         private TileMatrix currentMatrix = null;
 
+#if UNITY_EDITOR
+        public OptimalTileMatrixSolverRuntimeDebugger Debugger { get; }
+#endif
+
         public OptimalTileMatrixSolver()
         {
             unfinishedMatrices = new LinkedList<TileMatrix>();
@@ -31,6 +35,10 @@ namespace WordFudge.ScoreSystem
             globalVisitedThisCalculationTiles = new HashSet<WorldTile>();
 
             matrixFactory = new TileMatrixFactory(globalVisitedThisCalculationTiles);
+
+#if UNITY_EDITOR
+            Debugger = new OptimalTileMatrixSolverRuntimeDebugger(this);
+#endif
         }
 
         public void Initialize(GameBoard gameBoard)
