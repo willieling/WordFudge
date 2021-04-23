@@ -10,22 +10,6 @@ namespace WordFudge
     [DebuggerDisplay("{Letter} - {Index}")]
     public class WorldTile : MonoBehaviour
     {
-        public struct Neighbors
-        {
-            public readonly WorldTile Up;
-            public readonly WorldTile Down;
-            public readonly WorldTile Left;
-            public readonly WorldTile Right;
-
-            public Neighbors(WorldTile up, WorldTile down, WorldTile left, WorldTile right)
-            {
-                Up = up;
-                Down = down;
-                Left = left;
-                Right = right;
-            }
-        }
-
         [SerializeField]
         private Text text;
         [SerializeField]
@@ -167,11 +151,6 @@ namespace WordFudge
                 //todo error
                 UnityEngine.Debug.LogWarning($"\'{name}\' already has the vertical word {word.Word}");
             }
-        }
-
-        public Neighbors GetNeighbours()
-        {
-            return new Neighbors(Up, Down, Left, Right);
         }
 
         public IReadOnlyCollection<WordContainer> GetAssociatedWordsOnAxis(Axis axis)

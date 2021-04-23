@@ -12,13 +12,34 @@ namespace WordFudge.ScoreSystem
     /// </summary>
     public static class TileWordUpdater
     {
-        public static void UpdateLinesIntersectingAddedTile(WorldTile placedTile)
+        private static readonly HashSet<int> wordHashCodeSet = new HashSet<int>();
+
+        public static void CalculateNewlyFormedWords(WorldTile placedTile)
         {
             List<WorldTile> line = GetHorizontalLine(placedTile);
             FindWordsAndAssociateThemWithTiles(placedTile, line, Axis.Horizontal);
 
             line = GetVerticalLine(placedTile);
             FindWordsAndAssociateThemWithTiles(placedTile, line, Axis.Vertical);
+        }
+
+        public static void RemoveDestroyedWords(WorldTile tile)
+        {
+            foreach(WordContainer word in tile.HorizontalWords)
+            {
+                if(!wordHashCodeSet.Remove(word))
+                {
+                    Debug.LogWarning("Trying to remove word that doesn't exist.");
+                }
+            }
+
+            foreach (WordContainer word in tile.VerticalWords)
+            {
+                if (!wordHashCodeSet.Remove(word))
+                {
+                    Debug.LogWarning("Trying to remove word that doesn't exist.");
+                }
+            }
         }
 
         private static void FindWordsAndAssociateThemWithTiles(WorldTile placedTile, List<WorldTile> line, Axis axis)
@@ -35,10 +56,17 @@ namespace WordFudge.ScoreSystem
                     // left to right INCLUSIVE
                     int length = rightIndex - leftIndex + 1;
                     string word = lineAsCharacters.Substring(leftIndex, length);
-                    if (Database.IsValidWord(word))
+
+                    //we need to check that we're not creating a duplicated WordContainer here
+                    //we could compare the Word itself, the first tile and the axis?
+                    //validate the wordHashCodeSet works
+                    if (Database.IsValidWord(word) && !wordHashCodeSet.Contains(WordContainer.GetWordHashCode(word, line[leftIndex], axis)))
                     {
                         WordContainer container = new WordContainer(word, line.GetRange(leftIndex, length), axis);
                         Debug.Log($"<color=cyan>[Tile {placedTile.Letter}] Found new word {container.Word}</color>");
+
+                        wordHashCodeSet.Add(container);
+
                         for (int k = leftIndex; k <= rightIndex; ++k)
                         {
                             switch(axis)

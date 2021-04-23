@@ -6,19 +6,19 @@ namespace WordFudge.ScoreSystem
 {
     public enum Axis
     {
-        Horizontal,
-        Vertical
+        Horizontal = -1,
+        Vertical = 1
     }
 
     /// <summary>
     /// Class that contains a word and a reference to all tiles in the word.
     /// </summary>
-    [DebuggerDisplay("{Word}.{guid} - {Axis} - Line {LineIndex}")]
+    [DebuggerDisplay("{Word}.{hashCode} - {Axis} - Line {LineIndex}")]
     public class WordContainer
     {
         private readonly List<WorldTile> tiles;
         private readonly HashSet<WorldTile> tilesSet;
-        private readonly Guid guid;
+        private readonly int hashCode;
 
         public Axis Axis { get; }
 
@@ -56,8 +56,6 @@ namespace WordFudge.ScoreSystem
             Assert.IsNotNull(tiles);
             Assert.IsTrue(tiles.Count > 0);
 
-            guid = Guid.GetGuid();
-
             Word = word;
             this.tiles = tiles;
             tilesSet = new HashSet<WorldTile>(this.tiles);
@@ -75,8 +73,16 @@ namespace WordFudge.ScoreSystem
                     LastTileIndex = LastTile.Index.y; 
                     break;
             }
+
+            hashCode = GetWordHashCode(Word, FirstTile, Axis);
         }
 
+        public static int GetWordHashCode(string word, WorldTile firstTile, Axis axis)
+        {
+            return word.GetHashCode() * firstTile.GetHashCode() * (int)axis;
+        }
+
+        //todo make horizontal and vertical versions?
         public void ClearAssociations()
         {
             switch (Axis)
@@ -108,18 +114,18 @@ namespace WordFudge.ScoreSystem
 
         public override bool Equals(object obj)
         {
-            WordContainer word = obj as WordContainer;
-            if(word == null)
+            WordContainer other = obj as WordContainer;
+            if(other == null)
             {
                 return false;
             }
 
-            return guid == word.guid;
+            return hashCode == other.hashCode;
         }
 
         public override int GetHashCode()
         {
-            return guid.GetHashCode();
+            return hashCode;
         }
 
         public static bool operator ==(WordContainer word, WordContainer other)
@@ -134,19 +140,24 @@ namespace WordFudge.ScoreSystem
                 return true;
             }
 
-            return word.guid == other.guid;
+            return word.GetHashCode() == other.GetHashCode();
         }
 
         public static bool operator !=(WordContainer word, WordContainer other)
         {
-            return word.guid != other.guid;
+            return !(word == other);
+        }
+
+        public static implicit operator int(WordContainer word)
+        {
+            return word.hashCode;
         }
 
         public class Comparer : IEqualityComparer<WordContainer>
         {
             bool IEqualityComparer<WordContainer>.Equals(WordContainer word, WordContainer other)
             {
-                return word.guid == other.guid;
+                return word.hashCode == other.hashCode;
             }
 
             int IEqualityComparer<WordContainer>.GetHashCode(WordContainer word)

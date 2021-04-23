@@ -63,7 +63,7 @@ namespace WordFudge.ScoreSystem
         /// <returns></returns>
         public TileMatrix DeepClone()
         {
-            return new TileMatrix(lastWord, visitedTiles, globalVisistedTiles, horizontalWords, verticalWords);
+            return new TileMatrix(lastWord, globalVisistedTiles, visitedTiles, horizontalWords, verticalWords);
         }
 
         public void AddHorizontalWord(WordContainer word)
@@ -115,6 +115,7 @@ namespace WordFudge.ScoreSystem
     /// A container holding a Score value and collection of tiles representing a 
     /// valid grouping of contiguous horizontal and vertical WorldTiles.
     /// </summary>
+    [DebuggerDisplay("Score: {Score}")]
     public class TileMatrixScore
     {
         private static TileMatrixScore zeroScore = new TileMatrixScore(new HashSet<WorldTile>());

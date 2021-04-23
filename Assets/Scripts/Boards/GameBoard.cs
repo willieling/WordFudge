@@ -68,7 +68,7 @@ namespace WordFudge.Boards
                 neighbour.Up = tile;
             }
 
-            TileWordUpdater.UpdateLinesIntersectingAddedTile(tile);
+            TileWordUpdater.CalculateNewlyFormedWords(tile);
 
             tile.RegisterToGameplayEvents();
 
@@ -94,7 +94,7 @@ namespace WordFudge.Boards
             RemoveTileFromGrid(tile);
             tile.UnregisterFromGameplayEvents();
 
-            WorldTile.Neighbors neighbours = tile.GetNeighbours();
+            TileWordUpdater.RemoveDestroyedWords(tile);
             tile.ClearNeighbourReferencesAndAssociatedWords();
 
             scoreHolder.Clear();
